@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "course-work-beta"
+version = "0.1.0"
+description = ""
+authors = ["Andrey Mezentsev <mezentsew@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[tool.poetry.group.lint.dependencies]
+flake8 = "^6.1.0"
+mypy = "^1.7.1"
+black = "^23.11.0"
+isort = "^5.12.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

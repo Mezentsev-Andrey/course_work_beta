@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 data_path_log = Path(__file__).parent.parent.joinpath("data", "services.log")
 logger = logging.getLogger("__services__")
@@ -39,7 +38,6 @@ def investment_income(month: str, transactions: list[dict], limit: int) -> int:
         for transaction in required_transactions:
             amount = transaction.get("Сумма платежа")
             abs_amount = abs(amount)
-
             if amount < 0 and abs_amount % limit != 0:
                 if limit == 50:
                     round_amount = limit * ((abs_amount // limit) + 1) - abs_amount
@@ -48,10 +46,9 @@ def investment_income(month: str, transactions: list[dict], limit: int) -> int:
                 else:
                     round_amount = 0
                 money_in_kopilka += round_amount
-        logger.info("Копилка успешно наполнена")
+        logger.info("Копилка успешно пополнена.")
         # Возврат результата
         return money_in_kopilka
-
     except (ValueError, KeyError, TypeError) as error:
         # Логирование ошибки и повторное вызов исключения
         print(f"Ошибка обработки транзакций: {str(error)}")

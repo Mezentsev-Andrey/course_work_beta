@@ -1,5 +1,5 @@
+import datetime
 import typing
-from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
 
@@ -48,31 +48,21 @@ def filter_transactions(
     :return: DataFrame с отфильтрованными транзакциями.
     """
     try:
-        # Обработка даты
         if date == "":
-            date_obj = datetime.now()
+            date_obj = datetime.datetime.now()
         else:
-            date_obj = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-
-        # Определение временного интервала (последние 90 дней относительно date_obj)
-        start_date = date_obj - timedelta(days=90)
-        end_date = date_obj
-
-        # Преобразование формата даты в DataFrame
+            date_obj = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        start_date = (date_obj - datetime.timedelta(days=90)).strftime("%Y.%m.%d")
+        end_date = date_obj.strftime("%Y.%m.%d")
         transactions["Дата операции"] = pd.to_datetime(
-            transactions["Дата операции"], format="%Y-%m-%d %H:%M:%S"
+            transactions["Дата операции"], dayfirst=True
         )
-
-        # Фильтрация данных
-        df_by_category = transactions[
+        df_by_category = transactions.loc[
             (transactions["Статус"] == "OK")
             & (transactions["Дата операции"] >= start_date)
             & (transactions["Дата операции"] <= end_date)
             & (transactions["Категория"] == category)
         ]
-
-        if report_to_file:
-            df_by_category.to_csv(report_to_file, index=False)
         return df_by_category
-    except (ValueError, KeyError, TypeError) as error:
+    except (ValueError, TypeError) as error:
         raise error

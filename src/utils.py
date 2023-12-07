@@ -88,8 +88,8 @@ def filter_operations_by_date(
     :return: отфильтрованный DataFrame с успешными операциями за месяц.
     """
     try:
-        start_date = date_obj.strftime("%Y.%m.01")
-        end_date = date_obj.strftime("%Y.%m.%d")
+        start_date = date_obj.strftime("%Y-%m-01")
+        end_date = date_obj.strftime("%Y-%m-%d")
         operations["Дата операции"] = pd.to_datetime(
             operations["Дата операции"], dayfirst=True
         )
@@ -102,11 +102,8 @@ def filter_operations_by_date(
 
         logger.info("Операции успешно отфильтрованы по дате и статусу 'OK'.")
         return filtered_operations
-    except ValueError as error:
+    except (ValueError, KeyError) as error:
         logger.error(f"Ошибка при фильтрации операций: {str(error)}.")
-        raise error
-    except KeyError as error:
-        logger.error(f"Произошла ошибка: {str(error)}.")
         raise error
 
 
@@ -135,13 +132,10 @@ def get_cards_payments(operations: pd.DataFrame) -> list[dict]:
             }
 
             result_list.append(card_dict)
-        logger.info("Данные по картам успешно выданы")
+        logger.info("Данные по картам успешно выданы.")
         return result_list
-    except ValueError as error:
-        logger.error(f"Произошла ошибка: {str(error)}")
-        raise error
-    except AttributeError as error:
-        logger.error(f"Произошла ошибка: {str(error)} из-за несуществующего атрибута")
+    except (ValueError, AttributeError) as error:
+        logger.error(f"Произошла ошибка: {str(error)}.")
         raise error
 
 
@@ -152,32 +146,31 @@ def get_top_five_operations(operations: pd.DataFrame) -> list[dict]:
     :return: список словарей с данными по топ-5 операциям для каждой карты.
     """
     try:
-        filtered_operations = operations[
+        filtered_operations = operations.loc[
             (operations["Сумма операции"] < 0)
             & (operations["Валюта операции"] == "RUB")
+            & (operations["Номер карты"] != "")
         ]
-        card_operations = filtered_operations[filtered_operations["Номер карты"] != ""]
-        top_five_operations_list = card_operations.nlargest(
-            5, "Сумма операции"
-        ).to_dict(orient="records")
+        top_five_operations_list = (
+            filtered_operations.sort_values(by=["Сумма операции"], ascending=True)
+            .head(5)
+            .to_dict(orient="records")
+        )
 
-        result_list = []
-        for operation in top_five_operations_list:
-            new_dict = {
-                "date": pd.to_datetime(operation["Дата операции"]).strftime("%d.%m.%Y"),
+        new_list = [
+            {
+                "date": pd.Timestamp(operation["Дата операции"]).strftime("%d.%m.%Y"),
                 "amount": abs(operation["Сумма операции"]),
                 "category": operation.get("Категория"),
                 "description": operation.get("Описание"),
             }
-            result_list.append(new_dict)
+            for operation in top_five_operations_list
+        ]
 
         logger.info("Топ-5 операций успешно получены.")
-        return result_list
-    except ValueError as error:
+        return new_list
+    except (ValueError, AttributeError) as error:
         logger.error(f"Ошибка при получении топ-5 операций: {str(error)}")
-        raise error
-    except AttributeError as error:
-        logger.error(f"Произошла ошибка: {str(error)} из-за несуществующего атрибута")
         raise error
 
 
@@ -187,12 +180,12 @@ def get_greeting_phrase() -> str:
     :return: приветственная фраза.
     """
     try:
-        # Получение текущего времени
-        current_time = datetime.datetime.now().time()
-        # Определение интервалов времени и соответствующих приветствий
-        if current_time < datetime.time(12, 0, 0):
+        current_hour = int(datetime.datetime.now().strftime("%H"))
+        if current_hour < 6:
+            greeting = "Доброй ночи!"
+        elif current_hour < 12:
             greeting = "Доброе утро!"
-        elif current_time < datetime.time(18, 0, 0):
+        elif current_hour < 18:
             greeting = "Добрый день!"
         else:
             greeting = "Добрый вечер!"

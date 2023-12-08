@@ -13,7 +13,7 @@ def test_investment_income_valid_input() -> None:
     ]
     limit = 50
 
-    result = investment_income(month, transactions, limit)
+    result = investment_income(month, transactions, limit)  # type: ignore
     assert result == 25
 
 
@@ -28,13 +28,13 @@ def test_investment_income_invalid_input() -> None:
     limit = 50
 
     with pytest.raises(ValueError):
-        investment_income(month, transactions, limit)
+        investment_income(month, transactions, limit)  # type: ignore
 
 
 def test_investment_income_empty_transactions() -> None:
     # Проверка возврата 0 при отсутствии транзакций
     month = "2023-12"
-    transactions = []
+    transactions = []  # type: ignore
     limit = 50
 
     result = investment_income(month, transactions, limit)

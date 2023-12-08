@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -28,13 +29,13 @@ def test_filter_transactions() -> None:
         assert filter_transactions(empty_oper_path, False)
 
 
-def test_report_to_file_with_filename():
+def test_report_to_file_with_filename() -> None:
     filename = Path(__file__).parent.parent.joinpath("tests", "test_data", "test_report_filename.csv")
     if os.path.exists(filename):
         os.remove(filename)
 
     @report_to_file(filename=filename)
-    def func(df):
+    def func(df: Any) -> Any:
         return df
 
     input_df = func(load_xlsx_file(OPERATIONS_PATH))

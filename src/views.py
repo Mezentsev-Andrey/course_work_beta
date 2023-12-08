@@ -30,26 +30,20 @@ def get_stock_prices(stocks: list[str], date_obj: datetime.datetime) -> list[dic
 
         # Список для хранения данных о курсах акций
         stock_list = []
-
         # Обработка каждой акции в списке
         for stock in stocks:
             stock_data = yf.Ticker(stock)
             data = stock_data.history(start=start_date, end=end_date).head(1)
-
-            if not data.empty:
-                one_date_data = data.to_dict(orient="records")[0]
-                stock_price = round(one_date_data["Close"], 2)
-                stock_list.append({stock: stock_price})
-            else:
-                logger.warning(f"Нет доступных данных для {stock} на {start_date}")
-
+            one_date_data = data.to_dict(orient="records")[0]
+            stock_price = round(one_date_data["Close"], 2)
+            stock_list.append({stock: stock_price})
         # Логирование успешного получения котировок акций
         logger.info("Котировки акций успешно получены.")
         return stock_list
     # Логирование ошибки и выброс исключения дальше
     except Exception as error:
         logger.error(f"Ошибка при получении котировок акций: {str(error)}.")
-        raise error
+        return []
 
 
 def get_currency_rates(currencies: list, date_obj: datetime.datetime) -> list[dict]:

@@ -1,5 +1,6 @@
 import datetime
 import os
+from typing import Any
 from unittest.mock import patch
 
 from config import STOCKS_CURRENCIES_PATH
@@ -95,7 +96,7 @@ response_request = {
 
 
 @patch("requests.get")
-def test_get_currency_rates(mock_get):
+def test_get_currency_rates(mock_get: Any) -> None:
     mock_get.return_value.json.return_value = response_request
     assert get_currency_rates(load_json_file(STOCKS_CURRENCIES_PATH)["user_currencies"], date_obj) == [
         {"currency": "USD", "rate": 70.99},

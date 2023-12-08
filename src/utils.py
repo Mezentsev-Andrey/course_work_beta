@@ -37,7 +37,7 @@ def load_xlsx_file(file_path: typing.Any) -> pd.DataFrame:
         raise error
 
 
-def load_json_file(file_path: typing.Any) -> dict[typing.Any, typing.Any]:
+def load_json_file(file_path: typing.Any) -> typing.Any:
     """
     Функция загружающая данные из файла JSON в объект Python.
     :param file_path: путь к файлу JSON.
@@ -64,7 +64,7 @@ def load_json_file(file_path: typing.Any) -> dict[typing.Any, typing.Any]:
 
 def get_converted_date(date_string: str) -> datetime.datetime:
     """
-    Функция преобразующая строку с датой в объект datetime.datetime.
+    Функция преобразующую строку с датой в объект datetime.datetime.
     :param date_string: строка, представляющая дату в формате '%Y-%m-%d %H:%M:%S'.
     :return:объект datetime, представляющий преобразованную дату.
     """
@@ -125,11 +125,10 @@ def get_cards_payments(operations: pd.DataFrame) -> list[dict]:
                 "total": round(abs(total_spent), 2),
                 "cashback": round(abs(total_spent) * 0.01, 2),
             }
-
             result_list.append(card_dict)
         logger.info("Данные по картам успешно выданы.")
         return result_list
-    except (ValueError, AttributeError) as error:
+    except (KeyError, TypeError) as error:
         logger.error(f"Произошла ошибка: {str(error)}.")
         raise error
 
@@ -162,7 +161,7 @@ def get_top_five_operations(operations: pd.DataFrame) -> list[dict]:
 
         logger.info("Топ-5 операций успешно получены.")
         return new_list
-    except (ValueError, AttributeError) as error:
+    except (ValueError, TypeError) as error:
         logger.error(f"Ошибка при получении топ-5 операций: {str(error)}")
         raise error
 
@@ -172,18 +171,14 @@ def get_greeting_phrase() -> str:
     Функция возвращающая приветственную фразу в зависимости от текущего времени суток.
     :return: приветственная фраза.
     """
-    try:
-        current_hour = int(datetime.datetime.now().strftime("%H"))
-        if current_hour < 6:
-            greeting = "Доброй ночи!"
-        elif current_hour < 12:
-            greeting = "Доброе утро!"
-        elif current_hour < 18:
-            greeting = "Добрый день!"
-        else:
-            greeting = "Добрый вечер!"
-        logger.info(f"Приветствие успешно получено: {greeting}")
-        return greeting
-    except Exception as error:
-        logger.error(f"Ошибка при получении приветствия: {str(error)}")
-        raise error
+    current_hour = int(datetime.datetime.now().strftime("%H"))
+    if current_hour < 6:
+        greeting = "Доброй ночи!"
+    elif current_hour < 12:
+        greeting = "Доброе утро!"
+    elif current_hour < 18:
+        greeting = "Добрый день!"
+    else:
+        greeting = "Добрый вечер!"
+    logger.info(f"Приветствие успешно получено: {greeting}")
+    return greeting

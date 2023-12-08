@@ -22,9 +22,7 @@ def report_to_file(*, filename: str | typing.Any = "") -> typing.Any:
             else:
                 date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 saving_place = Path(
-                    Path(__file__).parent.parent.joinpath(
-                        "data", "reports", f"{date}_{any_func.__name__}_report.csv"
-                    )
+                    Path(__file__).parent.parent.joinpath("data", "reports", f"{date}_{any_func.__name__}_report.csv")
                 )
                 saving_place.parent.mkdir(exist_ok=True, parents=True)
             result.to_csv(saving_place, index=False, encoding="utf-8")
@@ -37,9 +35,7 @@ def report_to_file(*, filename: str | typing.Any = "") -> typing.Any:
 
 
 @report_to_file()
-def filter_transactions(
-    transactions: pd.DataFrame, category: str, date: str = ""
-) -> pd.DataFrame:
+def filter_transactions(transactions: pd.DataFrame, category: str, date: str = "") -> pd.DataFrame:
     """
     Функция фильтрующая транзакции по указанной категории за определенный временной период.
     :param transactions: DataFrame с данными о транзакциях.
@@ -54,9 +50,7 @@ def filter_transactions(
             date_obj = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
         start_date = (date_obj - datetime.timedelta(days=90)).strftime("%Y.%m.%d")
         end_date = date_obj.strftime("%Y.%m.%d")
-        transactions["Дата операции"] = pd.to_datetime(
-            transactions["Дата операции"], dayfirst=True
-        )
+        transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], dayfirst=True)
         df_by_category = transactions.loc[
             (transactions["Статус"] == "OK")
             & (transactions["Дата операции"] >= start_date)

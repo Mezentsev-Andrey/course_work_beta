@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 data_path_log = Path(__file__).parent.parent.joinpath("data", "services.log")
 logger = logging.getLogger("__services__")
@@ -11,7 +12,7 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 
-def investment_income(month: str, transactions: list[dict], limit: int) -> int:
+def investment_income(month: str, transactions: List[Dict[str, Optional[Union[str, int]]]], limit: int) -> int:
     """
     Функция рассчитывающая доход от инвестиций за указанный месяц.
     :param month: строка с указанием месяца в формате "YYYY-MM".
@@ -21,6 +22,9 @@ def investment_income(month: str, transactions: list[dict], limit: int) -> int:
     """
     try:
         # Преобразование месяца
+        if not isinstance(month, str):
+            raise ValueError(f"Invalid month format: {month}")
+
         datetime_month = datetime.strptime(month, "%Y-%m")
         corr_month = datetime_month.strftime("%m.%Y")
 
@@ -29,14 +33,18 @@ def investment_income(month: str, transactions: list[dict], limit: int) -> int:
             t
             for t in transactions
             if t.get("Статус") == "OK"
-            and datetime.strptime(t.get("Дата операции"), "%Y-%m-%d").strftime("%m.%Y")
-            == corr_month
+            and t.get("Дата операции") is not None
+            and isinstance(t["Дата операции"], str)
+            and datetime.strptime(str(t["Дата операции"]), "%Y-%m-%d").strftime("%m.%Y") == corr_month
         ]
 
         # Расчет суммы в копилке
         money_in_kopilka = 0
         for transaction in required_transactions:
             amount = transaction.get("Сумма платежа")
+            if not isinstance(amount, (int, float)):
+                raise ValueError(f"Invalid amount format: {amount}")
+
             abs_amount = abs(amount)
             if amount < 0 and abs_amount % limit != 0:
                 if limit == 50:

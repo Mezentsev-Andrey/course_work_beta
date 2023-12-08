@@ -22,7 +22,7 @@ def test_load_xlsx_file_valid_file(tmp_path):
     assert result.equals(pd.DataFrame(excel_data))
 
 
-def test_load_xlsx_file_file_not_found():
+def test_load_xlsx_file_file_not_found() -> None:
     with pytest.raises(FileNotFoundError):
         load_xlsx_file("nonexistent_file.xlsx")
 
@@ -51,7 +51,7 @@ def test_load_json_file_valid_file(tmp_path):
     assert result == json_data
 
 
-def test_load_json_file_file_not_found():
+def test_load_json_file_file_not_found() -> None:
     with pytest.raises(FileNotFoundError):
         load_json_file("nonexistent_file.json")
 
@@ -67,7 +67,7 @@ def test_load_json_file_json_decode_error(tmp_path):
         load_json_file(file_path)
 
 
-def test_get_converted_date_valid_date():
+def test_get_converted_date_valid_date() -> None:
     # Проверка успешного преобразования строки с датой
     date_string = "2023-12-06 12:34:56"
     result = get_converted_date(date_string)
@@ -75,7 +75,7 @@ def test_get_converted_date_valid_date():
     assert result == expected_date
 
 
-def test_get_converted_date_invalid_date():
+def test_get_converted_date_invalid_date() -> None:
     # Проверка генерации ValueError при некорректной строке с датой
     invalid_date_string = "invalid_date"
     with pytest.raises(ValueError):
@@ -160,20 +160,20 @@ def test_get_top_five_operations(sample_operations, caplog):
 
 
 @freeze_time("2021-10-16 03:00:00")
-def test_get_greeting_phrase_night():
+def test_get_greeting_phrase_night() -> None:
     assert get_greeting_phrase() == "Доброй ночи!"
 
 
 @freeze_time("2021-10-16 10:00:00")
-def test_get_greeting_phrase_morning():
+def test_get_greeting_phrase_morning() -> None:
     assert get_greeting_phrase() == "Доброе утро!"
 
 
 @freeze_time("2021-10-16 15:00:00")
-def test_get_greeting_phrase_day():
+def test_get_greeting_phrase_day() -> None:
     assert get_greeting_phrase() == "Добрый день!"
 
 
 @freeze_time("2021-10-16 21:00:00")
-def test_get_greeting_phrase_evening():
+def test_get_greeting_phrase_evening() -> None:
     assert get_greeting_phrase() == "Добрый вечер!"

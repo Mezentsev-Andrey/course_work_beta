@@ -37,7 +37,7 @@ def load_xlsx_file(file_path: typing.Any) -> pd.DataFrame:
         raise error
 
 
-def load_json_file(file_path: str) -> dict:
+def load_json_file(file_path: typing.Any) -> dict[typing.Any, typing.Any]:
     """
     Функция загружающая данные из файла JSON в объект Python.
     :param file_path: путь к файлу JSON.
@@ -78,9 +78,7 @@ def get_converted_date(date_string: str) -> datetime.datetime:
         raise error
 
 
-def filter_operations_by_date(
-    operations: pd.DataFrame, date_obj: datetime.datetime
-) -> pd.DataFrame:
+def filter_operations_by_date(operations: pd.DataFrame, date_obj: datetime.datetime) -> pd.DataFrame:
     """
     Функция фильтрующая успешные операции за месяц, с 1 числа месяца до выбранной даты.
     :param operations: DataFrame с операциями.
@@ -90,9 +88,7 @@ def filter_operations_by_date(
     try:
         start_date = date_obj.strftime("%Y-%m-01")
         end_date = date_obj.strftime("%Y-%m-%d")
-        operations["Дата операции"] = pd.to_datetime(
-            operations["Дата операции"], dayfirst=True
-        )
+        operations["Дата операции"] = pd.to_datetime(operations["Дата операции"], dayfirst=True)
 
         filtered_operations = operations.loc[
             (operations["Статус"] == "OK")
@@ -120,8 +116,7 @@ def get_cards_payments(operations: pd.DataFrame) -> list[dict]:
         for card in cards_list:
             card_operations = operations[operations["Номер карты"] == card]
             total_spent = card_operations.loc[
-                (card_operations["Сумма операции"] < 0)
-                & (card_operations["Валюта операции"] == "RUB"),
+                (card_operations["Сумма операции"] < 0) & (card_operations["Валюта операции"] == "RUB"),
                 "Сумма операции",
             ].sum()
 
@@ -152,9 +147,7 @@ def get_top_five_operations(operations: pd.DataFrame) -> list[dict]:
             & (operations["Номер карты"] != "")
         ]
         top_five_operations_list = (
-            filtered_operations.sort_values(by=["Сумма операции"], ascending=True)
-            .head(5)
-            .to_dict(orient="records")
+            filtered_operations.sort_values(by=["Сумма операции"], ascending=True).head(5).to_dict(orient="records")
         )
 
         new_list = [

@@ -7,12 +7,10 @@ from src.utils import get_converted_date, load_json_file
 from src.views import get_currency_rates, get_stock_prices
 
 
-def test_get_stock_prices():
+def test_get_stock_prices() -> None:
     # Параметры для теста
     stocks = ["AAPL", "GOOGL"]
-    date_obj = datetime.datetime(
-        2023, 1, 1
-    )  # Замените эту дату на актуальную для ваших тестов
+    date_obj = datetime.datetime(2023, 1, 1)
 
     # Вызов функции
     result = get_stock_prices(stocks, date_obj)
@@ -99,9 +97,7 @@ response_request = {
 @patch("requests.get")
 def test_get_currency_rates(mock_get):
     mock_get.return_value.json.return_value = response_request
-    assert get_currency_rates(
-        load_json_file(STOCKS_CURRENCIES_PATH)["user_currencies"], date_obj
-    ) == [
+    assert get_currency_rates(load_json_file(STOCKS_CURRENCIES_PATH)["user_currencies"], date_obj) == [
         {"currency": "USD", "rate": 70.99},
         {"currency": "EUR", "rate": 82.34},
         {"currency": "CHF", "rate": 76.88},

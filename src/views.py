@@ -70,10 +70,14 @@ def get_currency_rates(currencies: list, date_obj: datetime.datetime) -> list[di
         f"https://api.apilayer.com/exchangerates_data/timeseries?"
         f"start_date={start_date_str}&end_date={end_date_str}&base=RUB"
     )
+
     # Получение ключа API из переменной среды
     api_key = os.getenv("EXCHANGE_RATE_API_KEY")
+    if api_key is None:
+        raise ValueError("No api_key")
     # Создание заголовков запроса с использованием ключа API
     headers = {"apikey": api_key}
+
     try:
         # Отправка GET-запроса к API APILAYER
         response = requests.get(url, headers=headers, data=[])
@@ -91,9 +95,7 @@ def get_currency_rates(currencies: list, date_obj: datetime.datetime) -> list[di
             # Запись названия текущей валюты в словарь
             dict_currency["currency"] = currency
             # Вычисление обратного значения курса валюты относительно базовой (RUB)
-            dict_currency["rate"] = round(
-                1 / float(currency_dict["rates"][start_date_str][currency]), 2
-            )
+            dict_currency["rate"] = round(1 / float(currency_dict["rates"][start_date_str][currency]), 2)
             # Добавление словаря в общий список
             currency_list.append(dict_currency)
 

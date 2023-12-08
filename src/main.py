@@ -1,4 +1,5 @@
 from pprint import pprint
+from typing import Any
 
 from config import OPERATIONS_PATH, STOCKS_CURRENCIES_PATH
 from src.utils import (filter_operations_by_date, get_cards_payments,
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     user_stocks = load_json_file(STOCKS_CURRENCIES_PATH)["user_stocks"]
     user_currencies = load_json_file(STOCKS_CURRENCIES_PATH)["user_currencies"]
 
-    def main(date: str) -> dict[str]:
+    def main(date: str) -> dict[Any, Any]:
         """
         Функция принимающая на вход строку с датой и возвращающая JSON-ответ с данными для главной страницы.
         :param date: строка с датой в формате "YYYY-MM-DD".

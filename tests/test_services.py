@@ -3,7 +3,7 @@ import pytest
 from src.services import investment_income
 
 
-def test_investment_income_valid_input():
+def test_investment_income_valid_input() -> None:
     # Проверка успешного расчета дохода от инвестиций
     month = "2023-01"
     transactions = [
@@ -17,17 +17,7 @@ def test_investment_income_valid_input():
     assert result == 25
 
 
-def test_investment_income_empty_transactions():
-    # Проверка возврата 0 при отсутствии транзакций
-    month = "2023-12"
-    transactions = []
-    limit = 50
-
-    result = investment_income(month, transactions, limit)
-    assert result == 0
-
-
-def test_investment_income_invalid_input():
+def test_investment_income_invalid_input() -> None:
     # Проверка обработки ошибки при некорректных входных данных
     month = "2023-12"
     transactions = [
@@ -39,3 +29,13 @@ def test_investment_income_invalid_input():
 
     with pytest.raises(ValueError):
         investment_income(month, transactions, limit)
+
+
+def test_investment_income_empty_transactions() -> None:
+    # Проверка возврата 0 при отсутствии транзакций
+    month = "2023-12"
+    transactions = []
+    limit = 50
+
+    result = investment_income(month, transactions, limit)
+    assert result == 0
